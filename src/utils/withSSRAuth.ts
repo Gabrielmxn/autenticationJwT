@@ -3,8 +3,8 @@ import { destroyCookie, parseCookies } from "nookies";
 import { AuthTokenError } from "../services/errors/AuthTokenError";
 
 
-export function withSSRAuth<T extends { [key: string]: any; }>(fn: GetServerSideProps<T>){
- return async (ctx: GetServerSidePropsContext): Promise<GetServerSidePropsResult<T>> => {
+export function withSSRAuth<P extends { [key: string]: any; }>(fn: GetServerSideProps<P>){
+ return async (ctx: GetServerSidePropsContext): Promise<GetServerSidePropsResult<P>> => {
   const cookies = parseCookies(ctx)
 
   if(!cookies['nextauth.token']){
@@ -15,6 +15,8 @@ export function withSSRAuth<T extends { [key: string]: any; }>(fn: GetServerSide
      }
    }
   }
+
+  
   try {
     return await fn(ctx);
   }catch(err) {
@@ -29,5 +31,12 @@ export function withSSRAuth<T extends { [key: string]: any; }>(fn: GetServerSide
       }
     }
   }
+
+  return {
+    redirect: {
+      destination: "/error", // Em caso de um erro não esperado, você pode redirecionar para uma página publica de erro genérico
+      permanent: false,
+    },
+  };
  }
 }
