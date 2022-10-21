@@ -9,6 +9,7 @@ export default function Dashboard(){
   return (
     <>
        <h1>Métricas</h1>
+       
     </>
     
   )
